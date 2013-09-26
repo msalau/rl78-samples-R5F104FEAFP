@@ -1,0 +1,17 @@
+These are sample applications for Renesas RL78 MCUs.
+
+For more information about RL78 family visit Renesas web site:
+http://www.renesas.eu/products/mpumcu/rl78/index.jsp
+
+These samples were tested on R5F104FEAFP (RL78/G14) MCU. But should
+run with minimal or no changes on other RL78 parts.
+
+GNURL78 toolchain can be downloaded from KPIT GNU Tools web site:
+http://www.kpitgnutools.com/
+It is recommended to use latest available toolchain.
+
+Directory structure:
+common/   - common files for all applications
+00-led/   - 'Hello World' example (turn LED on)
+
+For license information see UNLICENSE file.
