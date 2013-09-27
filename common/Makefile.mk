@@ -18,6 +18,13 @@ FLASHER_PORT  ?= /dev/ttyUSB0
 FLASHER_MODE  ?= 1
 FLASHER_SPEED ?= 1000000
 
+FLASHER_TERMINAL_SPEED ?= 1000000
+ifdef START_TERMINAL
+FLASHER_TERMINAL  := -t$(FLASHER_TERMINAL_SPEED)
+else
+FLASHER_TERMINAL  :=
+endif
+
 COMMON_PATH  := ../common
 PROJECT_PATH := .
 
@@ -33,7 +40,7 @@ OBJS := $(SRC_C:.c=.o) \
 
 DEPS := $(OBJS:.o=.d)
 
-.PHONY: all rom flash erase clean
+.PHONY: all rom flash erase clean terminal
 
 all: $(PROJECT_MOT) $(PROJECT_LST)
 	$(SIZE) $(PROJECT_ELF)
@@ -50,7 +57,10 @@ $(PROJECT_ELF): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 flash: $(PROJECT_MOT)
-	$(FLASHER) -vvwri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_PORT) $^
+	$(FLASHER) -vvwri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_TERMINAL) $(FLASHER_PORT) $^
+
+terminal:
+	$(FLASHER) -rt$(FLASHER_TERMINAL_SPEED) $(FLASHER_PORT)
 
 erase:
 	$(FLASHER) -vveri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_PORT)
