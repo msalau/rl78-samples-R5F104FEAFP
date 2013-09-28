@@ -2,7 +2,7 @@
 #include <iodefine.h>
 #include <iodefine_ext.h>
 
-void uart0_init(void)
+void uart0_init (void)
 {
     /* Configure UART0 */
     SAU0EN = 1;                                             /* Supply clock to serial array unit 0 */
@@ -45,17 +45,21 @@ void uart0_init(void)
     STIF0 = 1;
 }
 
-int uart0_puts(const char __far * s)
+int uart0_putchar (int c)
+{
+    while (0 == STIF0);
+    STIF0 = 0;
+    SDR00 = (unsigned char)c;
+    return (unsigned char)c;
+}
+
+int uart0_puts (const char __far * s)
 {
     while ('\0' != *s)
     {
-        while (0 == STIF0);
-        STIF0 = 0;
-        SDR00 = *s++;
+        uart0_putchar(*s++);
     }
-    while (0 == STIF0);
-    STIF0 = 0;
-    SDR00 = '\n';
+    uart0_putchar('\n');
     return 1;
 }
 
