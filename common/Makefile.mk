@@ -40,7 +40,7 @@ OBJS := $(SRC_C:.c=.o) \
 
 DEPS := $(OBJS:.o=.d)
 
-.PHONY: all rom flash erase clean terminal
+.PHONY: all rom flash erase clean reset
 
 all: $(PROJECT_MOT) $(PROJECT_LST)
 	$(SIZE) $(PROJECT_ELF)
@@ -59,8 +59,8 @@ $(PROJECT_ELF): $(OBJS)
 flash: $(PROJECT_MOT)
 	$(FLASHER) -vvwri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_TERMINAL) $(FLASHER_PORT) $^
 
-terminal:
-	$(FLASHER) -rt$(FLASHER_TERMINAL_SPEED) $(FLASHER_PORT)
+reset:
+	$(FLASHER) -r $(FLASHER_TERMINAL) $(FLASHER_PORT)
 
 erase:
 	$(FLASHER) -vveri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_PORT)
