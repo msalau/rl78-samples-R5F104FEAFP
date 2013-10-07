@@ -53,7 +53,7 @@ int uart0_putchar (int c)
     return (unsigned char)c;
 }
 
-int uart0_puts (const char __far * s)
+int uart0_puts (const char * s)
 {
     while ('\0' != *s)
     {
