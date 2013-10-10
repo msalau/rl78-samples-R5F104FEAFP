@@ -32,7 +32,8 @@ PROJECT_LNK := $(COMMON_PATH)/R5F104xE.ld
 
 ASFLAGS := -MMD
 CFLAGS  := -mmul=rl78 -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -MMD -I$(PROJECT_PATH) -I$(COMMON_PATH)
-LDFLAGS := -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK) -loptc -loptm
+LDFLAGS := -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK)
+LIBS    := -loptm -loptc
 
 OBJS := $(SRC_C:.c=.o) \
 	$(SRC_S:.S=.o) \
@@ -54,7 +55,7 @@ $(PROJECT_LST): $(PROJECT_ELF)
 	$(OBJDUMP) -DS $^ > $@
 
 $(PROJECT_ELF): $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 flash: $(PROJECT_MOT)
 	$(FLASHER) -vvwri -m$(FLASHER_MODE) -b$(FLASHER_SPEED) $(FLASHER_TERMINAL) $(FLASHER_PORT) $^
