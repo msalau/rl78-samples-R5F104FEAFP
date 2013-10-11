@@ -179,7 +179,7 @@ SECTIONS
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
     . = ALIGN(2);
-    KEEP (*(EXCLUDE_FILE (*crtbegin*.o *crtend*.o) .init))
+    KEEP (*(.init))
     KEEP (*(.fini))
   } > ROM
 
