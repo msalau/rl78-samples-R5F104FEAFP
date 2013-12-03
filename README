@@ -15,6 +15,7 @@ common/       - common files for all applications
 00-led/       - 'Hello World' example (turn LED on)
 01-uart/      - Transmit string through UART0
 02-spi/       - Transmit string through CSI0
+03-uart-dtc/  - Transmit string through UART0 with DTC
 
 For license information see UNLICENSE file.
 
