@@ -11,9 +11,10 @@ http://www.kpitgnutools.com/
 It is recommended to use latest available toolchain.
 
 Directory structure:
-common/   - common files for all applications
-00-led/   - 'Hello World' example (turn LED on)
-01-uart/  - Transmit string through UART0
+common/       - common files for all applications
+00-led/       - 'Hello World' example (turn LED on)
+01-uart/      - Transmit string through UART0
+02-spi/       - Transmit string through CSI0
 
 For license information see UNLICENSE file.
 
