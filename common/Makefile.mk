@@ -12,6 +12,7 @@ AS      := $(TOOL_PREFIX)-gcc
 OBJCOPY := $(TOOL_PREFIX)-objcopy
 OBJDUMP := $(TOOL_PREFIX)-objdump
 SIZE    := $(TOOL_PREFIX)-size
+LINT    := splint
 
 FLASHER       := rl78flash
 FLASHER_PORT  ?= /dev/ttyUSB0
@@ -30,10 +31,36 @@ PROJECT_PATH := .
 
 PROJECT_LNK := $(COMMON_PATH)/R5F104xE.ld
 
+INCLUDE := -I$(PROJECT_PATH) -I$(COMMON_PATH)
 ASFLAGS := -MMD
-CFLAGS  := -mmul=rl78 -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -MMD -I$(PROJECT_PATH) -I$(COMMON_PATH)
+CFLAGS  := -std=gnu89 -mmul=rl78 -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -MMD $(INCLUDE)
 LDFLAGS := -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK)
 LIBS    := -loptm -loptc
+
+CPATH := `$(CC) -print-file-name=include`
+
+LINTFLAGS := \
+	-linelen 10000 \
+	+quiet \
+	+stats \
+	+show-summary \
+	$(INCLUDE) \
+	+boolint \
+	+charint \
+	+slashslashcomment \
+	+declundef \
+	+relax-types \
+	+nullptrarith \
+	+sizeoftype \
+	+looploopbreak \
+	+loopswitchbreak \
+	+evalorderuncon \
+	+bitwisesigned \
+	+matchanyintegral \
+	-D'__attribute__(a)=' \
+	-D'__asm__(a)=' \
+	-D'asm(a)=' \
+	$(END)
 
 OBJS := $(SRC_C:.c=.o) \
 	$(SRC_S:.S=.o) \
@@ -41,12 +68,15 @@ OBJS := $(SRC_C:.c=.o) \
 
 DEPS := $(OBJS:.o=.d)
 
-.PHONY: all rom flash erase clean reset
+.PHONY: all rom check flash erase clean reset
 
 all: $(PROJECT_MOT) $(PROJECT_LST)
 	$(SIZE) $(PROJECT_ELF)
 
 rom: $(PROJECT_MOT)
+
+check: $(SRC_C)
+	CPATH=$(CPATH) $(LINT) $(LINTFLAGS) $^
 
 $(PROJECT_MOT): $(PROJECT_ELF)
 	$(OBJCOPY) -O srec $^ $@
