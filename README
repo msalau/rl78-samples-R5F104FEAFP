@@ -18,6 +18,7 @@ common/       - common files for all applications
 03-uart-dtc/  - Transmit string through UART0 with DTC
 04-sleep/     - Use sub-clock and IT (interval timer)
                 to wake MCU up from STOP mode every 125 ms
+05-adc/       - Measure Vdd with ADC and transmit result through UART0
 
 For license information see UNLICENSE file.
 
