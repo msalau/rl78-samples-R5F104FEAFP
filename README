@@ -16,6 +16,8 @@ common/       - common files for all applications
 01-uart/      - Transmit string through UART0
 02-spi/       - Transmit string through CSI0
 03-uart-dtc/  - Transmit string through UART0 with DTC
+04-sleep/     - Use sub-clock and IT (interval timer)
+                to wake MCU up from STOP mode every 125 ms
 
 For license information see UNLICENSE file.
 
