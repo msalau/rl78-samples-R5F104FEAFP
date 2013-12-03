@@ -31,21 +31,21 @@ void uart0_init (void)
                                                                1 stop bit
                                                                8-bit data length
                                                             */
-    SDR00 = (7 << 9);                                       /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
+    SDR00 = (7U << 9);                                      /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
     SOL0 &= ~0x01U;                                         /* Output is not inverted */
     SO0 |= 0x01U;                                           /* Initial output level is 1 */
     SOE0 |= 0x01U;                                          /* Enable data output */
 
     /* Configure PM51 as open-drain output */
-    POM5 |= (1 << 1);
-    P5 |= (1 << 1);
-    PM5 &= ~(1 << 1);
+    POM5 |= (1U << 1);
+    P5 |= (1U << 1);
+    PM5 &= ~(1U << 1);
 
     SS0 = 0x01U;                                            /* Enable UART0 transmitter operation (channel 0) */
     STIF0 = 1;
 }
 
-int uart0_putchar (int c)
+static int uart0_putchar (int c)
 {
     while (0 == STIF0);
     STIF0 = 0;
@@ -57,9 +57,9 @@ int uart0_puts (const char * s)
 {
     while ('\0' != *s)
     {
-        uart0_putchar(*s++);
+        (void)uart0_putchar(*s++);
     }
-    uart0_putchar('\n');
+    (void)uart0_putchar('\n');
     return 1;
 }
 

@@ -3,7 +3,7 @@
 int main(void)
 {
     uart0_init();
-    uart0_puts("Hello, RL78! [:");
+    (void)uart0_puts("Hello, RL78! [:");
     for(;;);
 }
 
