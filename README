@@ -6,9 +6,15 @@ http://www.renesas.eu/products/mpumcu/rl78/index.jsp
 These samples were tested on R5F104FEAFP (RL78/G14) MCU. But should
 run with minimal or no changes on other RL78 parts.
 
-GNURL78 toolchain can be downloaded from KPIT GNU Tools web site:
-http://www.kpitgnutools.com/
-It is recommended to use latest available toolchain.
+The samples can be built using the rl78-elf-gcc toolchain.
+The easiest option is to use a ready-to-use docket image with the toolchain:
+https://hub.docker.com/r/msalau/rl78-elf-gcc
+
+E.g.:
+  docker run --rm -v "$(pwd):/src" msalau/rl78-elf-gcc:4.9.2.202002 make
+
+A pre-built toolchain can also be obtained from https://llvm-gcc-renesas.com/
+https://llvm-gcc-renesas.com/rl78/rl78-download-toolchains/
 
 Directory structure:
 common/       - common files for all applications
@@ -21,4 +27,3 @@ common/       - common files for all applications
 05-adc/       - Measure Vdd with ADC and transmit result through UART0
 
 For license information see UNLICENSE file.
-

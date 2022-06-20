@@ -3,15 +3,14 @@ PROJECT_MOT := $(PROJECT).mot
 PROJECT_MAP := $(PROJECT).map
 PROJECT_LST := $(PROJECT).lst
 
-TOOL_PATH := $(shell find /usr/share /opt -maxdepth 1 -type d -iname "gnurl78*" | sort | tail -n 1)/bin
-TOOL_PREFIX := $(TOOL_PATH)/rl78-elf
+TOOL_PREFIX ?= rl78-elf-
 
-LD      := $(TOOL_PREFIX)-gcc
-CC      := $(TOOL_PREFIX)-gcc
-AS      := $(TOOL_PREFIX)-gcc
-OBJCOPY := $(TOOL_PREFIX)-objcopy
-OBJDUMP := $(TOOL_PREFIX)-objdump
-SIZE    := $(TOOL_PREFIX)-size
+LD      := $(TOOL_PREFIX)gcc
+CC      := $(TOOL_PREFIX)gcc
+AS      := $(TOOL_PREFIX)gcc
+OBJCOPY := $(TOOL_PREFIX)objcopy
+OBJDUMP := $(TOOL_PREFIX)objdump
+SIZE    := $(TOOL_PREFIX)size
 LINT    := splint
 
 FLASHER       := rl78flash
@@ -33,9 +32,9 @@ PROJECT_LNK := $(COMMON_PATH)/R5F104xE.ld
 
 INCLUDE := -I$(PROJECT_PATH) -I$(COMMON_PATH)
 ASFLAGS := -MMD
-CFLAGS  := -std=gnu89 -mmul=rl78 -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -MMD $(INCLUDE)
-LDFLAGS := -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK)
-LIBS    := -loptm -loptc
+CFLAGS  := -std=gnu89 -mcpu=g14 -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -MMD $(INCLUDE)
+LDFLAGS := -mcpu=g14 -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK)
+LIBS    := -lm
 
 CPATH := `$(CC) -print-file-name=include`
 
@@ -64,6 +63,7 @@ LINTFLAGS := \
 
 OBJS := $(SRC_C:.c=.o) \
 	$(SRC_S:.S=.o) \
+	$(COMMON_PATH)/option_bytes.o \
 	$(END)
 
 DEPS := $(OBJS:.o=.d)

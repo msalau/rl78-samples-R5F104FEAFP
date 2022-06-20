@@ -6,4 +6,6 @@
 *.hex
 *.srec
 *.[ado]
-
+/GPATH
+/GRTAGS
+/GTAGS

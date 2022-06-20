@@ -43,8 +43,9 @@ MEMORY {
 	IVEC (r)  : ORIGIN = 0x00004, LENGTH = 0x0007c
 	OPT (r)   : ORIGIN = 0x000c0, LENGTH = 0x00004
 	ROM (r)   : ORIGIN = 0x000d8, LENGTH = 0x0ff28
-	RAM (w)   : ORIGIN = 0xfe900, LENGTH = 0x015e0
-	STACK (w) : ORIGIN = 0xffee0, LENGTH = 0x00002
+	RAM (w)   : ORIGIN = 0xfe900, LENGTH = 0x01520
+	STACK (w) : ORIGIN = 0xffe20, LENGTH = 0x00002
+	SADDR (w) : ORIGIN = 0xffe20, LENGTH = 0x000a0
 }
 
 SECTIONS
@@ -59,11 +60,13 @@ SECTIONS
   } > IVEC
   .opt :
   {
-    BYTE(0x6e)
-    BYTE(0xff)
-    BYTE(0xe9)
-    BYTE(0x04)
+    KEEP(*(EXCLUDE_FILE (*crt0.o) .opt))
   } > OPT
+
+  /* CubeSuite always starts at 0xd8.  */
+  .csstart : {
+    KEEP (*(.csstart))
+  } > ROM
 
   /* For code that must be in the first 64k, or could fill unused
      space below .rodata.  */
@@ -117,12 +120,23 @@ SECTIONS
     PROVIDE (end = .);
   } > RAM
   PROVIDE (__bsssize = SIZEOF(.bss));
+  PROVIDE (stack_size = 0x100); 
 
   .stack (ORIGIN (STACK)) :
   {
     PROVIDE (__stack = .);
     *(.stack)
+    ASSERT ((__stack > (_end + stack_size)),"Error: Too much data - no room left for the stack");
   }
+
+  .saddr : {
+    . = ALIGN(2);
+    PROVIDE (__saddrstart = .);
+    *(.saddr)
+    . = ALIGN(2);
+  } >SADDR AT>ROM
+  PROVIDE(__romsaddrstart = LOADADDR(.saddr));
+  PROVIDE (__romsaddrcopysize = SIZEOF(.saddr));
 
   .rodata (MAX(__romdatastart + __romdatacopysize, 0x2000)) : {
     . = ALIGN(2);
@@ -167,7 +181,11 @@ SECTIONS
     KEEP (*(.dtors))
   } > ROM
 
-  .text :
+  .frodata : {
+    KEEP (*(.frodata))
+  } > ROM
+
+  .text           :
   {
     PROVIDE (_start = .);
     *(.text P .stub .text.* .gnu.linkonce.t.*)
@@ -184,6 +202,8 @@ SECTIONS
   } > ROM
 
   /* The rest are all not normally part of the runtime image.  */
+  PROVIDE (__rl78_abs__ = 0);
+  .note : { *(.note) }
 
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
@@ -208,7 +228,7 @@ SECTIONS
   /* DWARF 2 */
   .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
   .debug_abbrev   0 : { *(.debug_abbrev) }
-  .debug_line     0 : { *(.debug_line) }
+  .debug_line     0 : { *(.debug_line .debug_line.* .debug_line_end ) }
   .debug_frame    0 : { *(.debug_frame) }
   .debug_str      0 : { *(.debug_str) }
   .debug_loc      0 : { *(.debug_loc) }
@@ -218,5 +238,10 @@ SECTIONS
   .debug_funcnames 0 : { *(.debug_funcnames) }
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
+  /* DWARF 3 */
+  .debug_pubtypes 0 : { *(.debug_pubtypes) }
+  .debug_ranges   0 : { *(.debug_ranges) }
+  /* DWARF Extension.  */
+  .debug_macro    0 : { *(.debug_macro) }
   /DISCARD/ : { *(.note.GNU-stack) }
 }
